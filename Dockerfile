@@ -34,21 +34,29 @@ RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
 
-# Create non-root user
+# Create non-root user with home directory
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN adduser --system --uid 1001 --home /home/nextjs nextjs
 
 # Copy necessary files from builder
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
 
 # Copy public folder if it exists (create empty if not)
 RUN mkdir -p ./public
 COPY --from=builder /app/public ./public
 
+# Set ownership
+RUN chown -R nextjs:nodejs /app
+RUN chown -R nextjs:nodejs /home/nextjs
+
 USER nextjs
+
+# Set home directory
+ENV HOME=/home/nextjs
 
 EXPOSE 3000
 
