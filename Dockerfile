@@ -1,9 +1,12 @@
 # Dockerfile for Next.js Application
 
-# Build stage
-FROM node:18-alpine AS builder
+# Build stage - use Debian-based image for Prisma compatibility
+FROM node:18-slim AS builder
 
 WORKDIR /app
+
+# Install OpenSSL for Prisma
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
 COPY package*.json ./
@@ -22,9 +25,12 @@ RUN npx prisma generate
 RUN npm run build
 
 # Production stage
-FROM node:18-alpine AS runner
+FROM node:18-slim AS runner
 
 WORKDIR /app
+
+# Install OpenSSL for Prisma
+RUN apt-get update && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 ENV NODE_ENV=production
 
