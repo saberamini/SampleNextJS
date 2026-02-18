@@ -2,7 +2,6 @@ services:
   # PostgreSQL Database
   db:
     image: postgres:15-alpine
-    container_name: capstone-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -17,10 +16,9 @@ services:
       timeout: 5s
       retries: 5
 
-  # Next.js Application (optional - for production builds)
+  # Next.js Application
   app:
     build: .
-    container_name: capstone-app
     ports:
       - "3000:3000"
     environment:
