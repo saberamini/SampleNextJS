@@ -47,7 +47,7 @@ A full-stack Next.js application for managing capstone projects. Built as a samp
 
 4. **Set up the database**
    ```bash
-   docker compose exec app npx prisma migrate dev
+   docker compose exec app npx prisma db push
    docker compose exec app npx prisma db seed
    ```
 
