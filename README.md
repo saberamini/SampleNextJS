@@ -24,62 +24,64 @@ A full-stack Next.js application for managing capstone projects. Built as a samp
 
 ### Prerequisites
 
-- Node.js 18+
-- PostgreSQL database
-- npm or yarn
+- **Docker Desktop** - That's it! Everything runs in containers.
+- Git
 
-### Installation
+### Quick Start (Docker)
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
-   cd SampleNextJS
+   git clone https://github.com/saberamini/SampleNextJS.git YourProjectName
+   cd YourProjectName
    ```
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Set up environment variables**
+2. **Set up environment variables**
    ```bash
    cp .env.example .env
    ```
 
-   Edit `.env` with your configuration:
-   ```env
-   # Database
-   DATABASE_URL="postgresql://postgres:password@localhost:5432/capstone_db?schema=public"
-
-   # NextAuth
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
-
-   # OAuth (optional)
-   GOOGLE_CLIENT_ID=""
-   GOOGLE_CLIENT_SECRET=""
+3. **Build and run everything with Docker**
+   ```bash
+   docker compose up --build -d
    ```
 
 4. **Set up the database**
    ```bash
-   # Generate Prisma client
-   npm run db:generate
-
-   # Push schema to database
-   npm run db:push
-
-   # Seed sample data (optional)
-   npm run db:seed
+   docker compose exec app npx prisma migrate dev
+   docker compose exec app npx prisma db seed
    ```
 
-5. **Run the development server**
-   ```bash
-   npm run dev
-   ```
-
-6. **Open the app**
+5. **Open the app**
 
    Visit [http://localhost:3000](http://localhost:3000)
+
+### Useful Docker Commands
+
+```bash
+docker compose logs -f        # View logs
+docker compose down           # Stop containers
+docker compose up -d          # Start containers
+docker compose up --build -d  # Rebuild after code changes
+```
+
+### Alternative: Local Development
+
+If you prefer hot-reload for faster development:
+
+```bash
+# Start only the database in Docker
+docker compose up db -d
+
+# Install dependencies locally (requires Node.js 18+)
+npm install
+
+# Set up database
+npx prisma migrate dev
+npx prisma db seed
+
+# Run with hot-reload
+npm run dev
+```
 
 ### Demo Credentials
 
@@ -223,18 +225,27 @@ npm run db:studio    # Open Prisma Studio
 
 ## Deployment
 
-### Vercel (Recommended)
+### Docker Compose (Recommended for Development)
+
+```bash
+# Run both database and app
+docker compose up --build -d
+
+# App is available at http://localhost:3000
+```
+
+### Vercel (Production)
 
 1. Push to GitHub
 2. Import project in Vercel
-3. Add environment variables
+3. Add environment variables (DATABASE_URL for a hosted PostgreSQL like Supabase or Neon)
 4. Deploy
 
-### Docker
+### Docker (Production)
 
 ```bash
 docker build -t capstone-manager .
-docker run -p 3000:3000 capstone-manager
+docker run -p 3000:3000 -e DATABASE_URL=your-db-url capstone-manager
 ```
 
 ## Learning Resources
